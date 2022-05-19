@@ -9,27 +9,17 @@ const ExchangeRatesList = (props) => {
   }
   let primaryCurrencies = currencies.filter(
     (item) =>
-      item.title === "USD" || item.title === "EUR" || item.title === "UAH"
+      item.title === "USD" ||
+      item.title === "EUR" ||
+      item.title === "PLN" ||
+      item.title === "GBP"
   );
 
-  let rateEUR = (
-    props.currenciesList["UAH"] / props.currenciesList["EUR"]
-  ).toFixed(2);
-
-  let rateUSD = (
-    props.currenciesList["UAH"] / props.currenciesList["USD"]
-  ).toFixed(2);
-
-  primaryCurrencies.map((item) => {
-    if (item.title === "USD") {
-      return (item.value = rateUSD);
-    } else if (item.title === "EUR") {
-      return (item.value = rateEUR);
-    } else {
-      item.title = "RUB";
-      item.value = "ПТН/ПНХ";
-    }
-  });
+  const rateFunction = (value) => {
+    return (props.currenciesList["UAH"] / props.currenciesList[value]).toFixed(
+      2
+    );
+  };
 
   return (
     <Fragment>
@@ -41,7 +31,7 @@ const ExchangeRatesList = (props) => {
               key={Math.random().toString()}
               currencyList={props.currenciesList}
               title={primaryCurrency.title}
-              value={primaryCurrency.value}
+              value={rateFunction(String(primaryCurrency.title))}
             />
           ))}
         </ul>
