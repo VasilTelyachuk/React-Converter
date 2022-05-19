@@ -1,0 +1,13 @@
+header {
+    padding-top: 100px;
+    margin-bottom: 50px;
+}
+
+.main_title {
+    font-size: 30px;
+    font-weight: 400;
+    font-family: 'Roboto', serif;
+    text-align: center;
+    color: azure;
+    margin: 0 0 20px 0;
+    }

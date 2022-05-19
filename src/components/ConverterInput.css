@@ -1,0 +1,26 @@
+.converter-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.converter-box_input {
+  margin-right: 10px;
+  border-style: none;
+  border-radius: 8px;
+  text-align: center;
+  outline-style: none;
+  width: 140px;
+  height: 40px;
+  padding: 0 5px 0 5px;
+  font-size: 16px;
+}
+
+.converter-box_select {
+  border-style: none;
+  border-radius: 8px;
+  text-align: center;
+  outline-style: none;
+  width: 80px;
+  height: 40px;
+}
