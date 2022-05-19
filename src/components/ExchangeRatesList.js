@@ -34,7 +34,7 @@ const ExchangeRatesList = (props) => {
   return (
     <Fragment>
       <section className="header_conteiner">
-        <span className="header_info">Курс Валюти:</span>
+        <span className="header_info">Курс Валют :</span>
         <ul className="header_list">
           {primaryCurrencies.map((primaryCurrency) => (
             <ExchangeRateItem
