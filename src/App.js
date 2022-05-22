@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useCallback } from "react";
 import ExchangeRatesList from "./components/ExchangeRatesList";
 import ConverterInput from "./components/ConverterInput";
 import "./App.css";
@@ -9,13 +9,25 @@ function App() {
   const [toAmount, setToAmount] = useState(1);
   const [fromCurrency, setFromCurrency] = useState("UAH");
   const [toCurrency, setToCurrency] = useState("USD");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchRates = async () => {
+  const fetchRates = useCallback(async () => {
+    setError(null);
+    try {
       const response = await fetch("https://cdn.cur.su/api/latest.json");
+      if (!response.ok) {
+        throw new Error("Error. Something went wrong.");
+      }
       const responseData = await response.json();
       setRates(responseData.rates);
-    };
+    } catch (error) {
+      setError(error.message);
+    }
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
     fetchRates();
     setInterval(() => {
       fetchRates();
@@ -23,20 +35,17 @@ function App() {
     return () => {
       clearInterval(fetchRates);
     };
-  }, []);
+  }, [fetchRates]);
 
-  useEffect(() => {
-    if (rates) {
-      onAmountChangeHandler(1);
-    }
-  }, [rates]);
-
-  let onAmountChangeHandler = (fromAmount) => {
-    setToAmount(
-      ((fromAmount * rates[toCurrency]) / rates[fromCurrency]).toFixed(2)
-    );
-    setFromAmount(fromAmount);
-  };
+  let onAmountChangeHandler = useCallback(
+    (fromAmount) => {
+      setToAmount(
+        ((fromAmount * rates[toCurrency]) / rates[fromCurrency]).toFixed(2)
+      );
+      setFromAmount(fromAmount);
+    },
+    [toCurrency, fromCurrency, rates]
+  );
 
   const toAmountChangeHandler = (toAmount) => {
     setFromAmount(
@@ -59,8 +68,14 @@ function App() {
     setToCurrency(toCurrency);
   };
 
-  return (
-    <Fragment>
+  useEffect(() => {
+    if (rates) {
+      onAmountChangeHandler(1);
+    }
+  }, [rates, onAmountChangeHandler]);
+
+  let content = (
+    <div>
       <header>
         <ExchangeRatesList currenciesList={rates} />
       </header>
@@ -81,8 +96,27 @@ function App() {
           onCurrencyChange={toCurrencyChangeHandler}
         />
       </main>
-    </Fragment>
+      ;
+    </div>
   );
+
+  if (error) {
+    content = (
+      <section className="main_info-window">
+        <p>{error}</p>
+      </section>
+    );
+  }
+
+  if (isLoading) {
+    content = (
+      <section className="main_info-window">
+        <p>Loading...</p>
+      </section>
+    );
+  }
+
+  return <Fragment>{content}</Fragment>;
 }
 
 export default App;
